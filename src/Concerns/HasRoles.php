@@ -1,0 +1,102 @@
+<?php
+
+declare( strict_types=1 );
+
+namespace ArtisanPackUI\Rbac\Concerns;
+
+use ArtisanPackUI\Rbac\Models\Role;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Collection;
+
+/**
+ * Add role membership to an authenticatable model.
+ *
+ * Provides the `roles()` relationship plus convenience helpers for checking
+ * and mutating role assignments. Pair with {@see HasPermissions} for full
+ * RBAC functionality.
+ */
+trait HasRoles
+{
+    public function roles(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            $this->resolveRoleModel(),
+            $this->getRoleUserPivotTable(),
+            $this->getRoleUserForeignKey(),
+            'role_id',
+        );
+    }
+
+    public function hasRole( Role|string|Collection $role ): bool
+    {
+        if ( is_string( $role ) ) {
+            return $this->roles->contains( 'name', $role );
+        }
+
+        if ( $role instanceof Role ) {
+            return $this->roles->contains( 'id', $role->getKey() );
+        }
+
+        return (bool) $role->intersect( $this->roles )->count();
+    }
+
+    public function assignRole( Role|string $role ): static
+    {
+        $resolved = $this->resolveRoleInstance( $role );
+
+        if ( null !== $resolved ) {
+            $this->roles()->syncWithoutDetaching( [ $resolved->getKey() ] );
+
+            if ( method_exists( $this, 'flushPermissionCache' ) ) {
+                $this->flushPermissionCache();
+            }
+        }
+
+        return $this;
+    }
+
+    public function removeRole( Role|string $role ): static
+    {
+        $resolved = $this->resolveRoleInstance( $role );
+
+        if ( null !== $resolved ) {
+            $this->roles()->detach( $resolved->getKey() );
+
+            if ( method_exists( $this, 'flushPermissionCache' ) ) {
+                $this->flushPermissionCache();
+            }
+        }
+
+        return $this;
+    }
+
+    protected function getRoleUserPivotTable(): string
+    {
+        return config( 'artisanpack.rbac.tables.role_user', 'role_user' );
+    }
+
+    protected function getRoleUserForeignKey(): string
+    {
+        return config( 'artisanpack.rbac.foreign_keys.user', 'user_id' );
+    }
+
+    /**
+     * @return class-string<Model>
+     */
+    protected function resolveRoleModel(): string
+    {
+        return config( 'artisanpack.rbac.models.role', Role::class );
+    }
+
+    protected function resolveRoleInstance( Role|string $role ): ?Role
+    {
+        if ( $role instanceof Role ) {
+            return $role;
+        }
+
+        $model = $this->resolveRoleModel();
+
+        return $model::where( 'name', $role )->first();
+    }
+}
