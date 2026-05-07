@@ -58,13 +58,13 @@ it( 'flushes the permission cache on demand', function (): void {
     $permission = Permission::create( [ 'name' => 'edit-articles' ] );
     $role->permissions()->attach( $permission );
     $user->roles()->attach( $role );
+    $user->load( 'roles.permissions' );
 
     expect( $user->hasPermissionTo( 'edit-articles' ) )->toBeTrue();
 
     $role->permissions()->detach( $permission );
+    $user->load( 'roles.permissions' );
     $user->flushPermissionCache();
-    $user = $user->fresh();
-    $user->load( 'roles' );
 
     expect( $user->hasPermissionTo( 'edit-articles' ) )->toBeFalse();
 } );

@@ -36,10 +36,20 @@ it( 'HasRoles trait resolves role lookups against the configured model', functio
 
     $user->assignRole( 'admin' );
 
-    expect( $user->fresh()->hasRole( 'admin' ) )->toBeTrue();
+    $resolved = $user->fresh();
+    $resolved->load( 'roles' );
+
+    expect( $resolved->hasRole( 'admin' ) )->toBeTrue();
+    expect( $resolved->roles->first() )->toBeInstanceOf( CustomRole::class );
 } );
 
 it( 'falls back to base models when no override is configured', function (): void {
     expect( Config::get( 'artisanpack.rbac.models.role' ) )->toBe( Role::class );
     expect( Config::get( 'artisanpack.rbac.models.permission' ) )->toBe( Permission::class );
+
+    $role       = Role::create( [ 'name' => 'admin' ] );
+    $permission = Permission::create( [ 'name' => 'edit-articles' ] );
+
+    expect( $role )->toBeInstanceOf( Role::class );
+    expect( $permission )->toBeInstanceOf( Permission::class );
 } );

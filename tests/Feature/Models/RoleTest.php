@@ -18,6 +18,7 @@ it( 'attaches permissions to a role', function (): void {
     $permission = Permission::create( [ 'name' => 'edit-articles' ] );
 
     $role->permissions()->attach( $permission );
+    $role->load( 'permissions' );
 
     expect( $role->permissions )->toHaveCount( 1 );
     expect( $role->permissions->first()->name )->toBe( 'edit-articles' );
@@ -26,6 +27,8 @@ it( 'attaches permissions to a role', function (): void {
 it( 'supports parent/child role hierarchy', function (): void {
     $admin  = Role::create( [ 'name' => 'admin' ] );
     $editor = Role::create( [ 'name' => 'editor', 'parent_id' => $admin->id ] );
+    $editor->load( 'parent' );
+    $admin->load( 'children' );
 
     expect( $editor->parent->id )->toBe( $admin->id );
     expect( $admin->children->first()->id )->toBe( $editor->id );
