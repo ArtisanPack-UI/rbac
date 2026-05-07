@@ -134,7 +134,7 @@ class RbacServiceProvider extends ServiceProvider
     protected function registerBladeDirectives(): void
     {
         Blade::directive( 'role', function ( $role ) {
-            return "<?php if(auth()->check() && auth()->user()->hasRole({$role})): ?>";
+            return "<?php if(auth()->check() && method_exists(auth()->user(), 'hasRole') && auth()->user()->hasRole({$role})): ?>";
         } );
 
         Blade::directive( 'endrole', function () {
@@ -164,8 +164,8 @@ class RbacServiceProvider extends ServiceProvider
 
             $permissionNames = $this->getCachedPermissionNames();
 
-            if ( in_array( $ability, $permissionNames, true ) && $user->hasPermissionTo( $ability ) ) {
-                return true;
+            if ( in_array( $ability, $permissionNames, true ) ) {
+                return $user->hasPermissionTo( $ability );
             }
 
             return null;

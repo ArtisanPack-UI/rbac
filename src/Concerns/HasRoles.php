@@ -8,6 +8,7 @@ use ArtisanPackUI\Rbac\Models\Role;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Event;
 
 /**
  * Add role membership to an authenticatable model.
@@ -38,7 +39,10 @@ trait HasRoles
             return $this->roles->contains( 'id', $role->getKey() );
         }
 
-        return (bool) $role->intersect( $this->roles )->count();
+        $incomingIds = $role->map->getKey()->all();
+        $currentIds  = $this->roles->map->getKey()->all();
+
+        return count( array_intersect( $incomingIds, $currentIds ) ) > 0;
     }
 
     public function assignRole( Role|string $role ): static
@@ -47,6 +51,7 @@ trait HasRoles
 
         if ( null !== $resolved ) {
             $this->roles()->syncWithoutDetaching( [ $resolved->getKey() ] );
+            Event::dispatch( 'rbac.user.role_assigned', [ $this, $resolved ] );
 
             if ( method_exists( $this, 'flushPermissionCache' ) ) {
                 $this->flushPermissionCache();
@@ -62,6 +67,7 @@ trait HasRoles
 
         if ( null !== $resolved ) {
             $this->roles()->detach( $resolved->getKey() );
+            Event::dispatch( 'rbac.user.role_removed', [ $this, $resolved ] );
 
             if ( method_exists( $this, 'flushPermissionCache' ) ) {
                 $this->flushPermissionCache();

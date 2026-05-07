@@ -9,8 +9,9 @@ use Illuminate\Support\Facades\Event;
 
 /**
  * Permission observer — emits package-level events when permission records
- * or pivot memberships change. Consumers listen on the `rbac.permission.*`
- * channel to layer on auditing.
+ * change. Consumers listen on the `rbac.permission.*` channel to layer on
+ * auditing. Laravel does not fire pivot events natively, so role/permission
+ * pivot mutations are dispatched from the call sites that mutate them.
  */
 class PermissionObserver
 {
@@ -30,15 +31,5 @@ class PermissionObserver
     public function deleted( Permission $permission ): void
     {
         Event::dispatch( 'rbac.permission.deleted', [ $permission ] );
-    }
-
-    public function pivotAttached( Permission $permission, string $relationName, array $pivotIds ): void
-    {
-        Event::dispatch( 'rbac.permission.pivot_attached', [ $permission, $relationName, $pivotIds ] );
-    }
-
-    public function pivotDetached( Permission $permission, string $relationName, array $pivotIds ): void
-    {
-        Event::dispatch( 'rbac.permission.pivot_detached', [ $permission, $relationName, $pivotIds ] );
     }
 }

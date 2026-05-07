@@ -8,9 +8,12 @@ use ArtisanPackUI\Rbac\Models\Role;
 use Illuminate\Support\Facades\Event;
 
 /**
- * Role observer — emits package-level events when role records or pivot
- * memberships change. Consumers (e.g. security-analytics) listen on the
- * `rbac.role.*` channel to layer on auditing.
+ * Role observer — emits package-level events when role records change.
+ * Consumers (e.g. security-analytics) listen on the `rbac.role.*` channel
+ * to layer on auditing. Pivot mutations are dispatched directly from
+ * {@see \ArtisanPackUI\Rbac\Concerns\HasRoles::assignRole()} and
+ * {@see \ArtisanPackUI\Rbac\Concerns\HasRoles::removeRole()} on the
+ * `rbac.user.role_*` channel since Laravel does not fire pivot events.
  */
 class RoleObserver
 {
@@ -27,15 +30,5 @@ class RoleObserver
     public function deleted( Role $role ): void
     {
         Event::dispatch( 'rbac.role.deleted', [ $role ] );
-    }
-
-    public function pivotAttached( Role $role, string $relationName, array $pivotIds ): void
-    {
-        Event::dispatch( 'rbac.role.pivot_attached', [ $role, $relationName, $pivotIds ] );
-    }
-
-    public function pivotDetached( Role $role, string $relationName, array $pivotIds ): void
-    {
-        Event::dispatch( 'rbac.role.pivot_detached', [ $role, $relationName, $pivotIds ] );
     }
 }

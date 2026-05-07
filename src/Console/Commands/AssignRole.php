@@ -21,9 +21,7 @@ class AssignRole extends Command
         $userArgument = $this->argument( 'user' );
         $role         = $roleModel::where( 'name', $this->argument( 'role' ) )->first();
 
-        $user = is_numeric( $userArgument )
-            ? $userModel::find( $userArgument )
-            : $userModel::where( 'email', $userArgument )->orWhere( 'username', $userArgument )->first();
+        $user = $this->resolveUser( $userModel, $userArgument );
 
         if ( ! $user ) {
             $this->error( 'User not found.' );
@@ -46,5 +44,36 @@ class AssignRole extends Command
         $this->info( "Role `{$role->name}` assigned to user `{$user->name}` successfully." );
 
         return self::SUCCESS;
+    }
+
+    /**
+     * Resolve a user by ID (numeric) or by any of the configured lookup
+     * fields. Skips lookup fields whose columns are missing on the users
+     * table so this works against any standard Laravel schema.
+     *
+     * @param  class-string<\Illuminate\Database\Eloquent\Model>  $userModel
+     */
+    protected function resolveUser( string $userModel, string $identifier )
+    {
+        if ( is_numeric( $identifier ) ) {
+            return $userModel::find( $identifier );
+        }
+
+        $table  = ( new $userModel() )->getTable();
+        $fields = (array) config( 'artisanpack.rbac.user_lookup_fields', [ 'email' ] );
+
+        $query = $userModel::query();
+        $any   = false;
+
+        foreach ( $fields as $field ) {
+            if ( ! \Illuminate\Support\Facades\Schema::hasColumn( $table, $field ) ) {
+                continue;
+            }
+
+            $query->orWhere( $field, $identifier );
+            $any = true;
+        }
+
+        return $any ? $query->first() : null;
     }
 }

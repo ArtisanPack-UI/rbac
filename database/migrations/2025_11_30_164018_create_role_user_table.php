@@ -16,7 +16,10 @@ return new class extends Migration {
                 $table->primary(['role_id', 'user_id']);
 
                 $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
-                $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+                $table->foreign('user_id')
+                    ->references('id')
+                    ->on(config('artisanpack.rbac.tables.users', 'users'))
+                    ->onDelete('cascade');
             });
         }
     }

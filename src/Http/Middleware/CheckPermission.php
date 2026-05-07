@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Auth;
  * permission names — the user must hold at least one to proceed.
  *
  *     Route::get('/admin', ...)->middleware('permission:posts.publish');
- *     Route::get('/admin', ...)->middleware('permission:posts.publish|posts.review');
+ *     Route::get('/admin', ...)->middleware('permission:posts.publish,posts.review');
  */
 class CheckPermission
 {

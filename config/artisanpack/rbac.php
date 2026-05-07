@@ -42,11 +42,27 @@ return [
     'tables' => [
         'role_user'       => 'role_user',
         'permission_role' => 'permission_role',
+        'users'           => 'users',
     ],
 
     'foreign_keys' => [
         'user' => 'user_id',
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | User Lookup Fields
+    |--------------------------------------------------------------------------
+    |
+    | Columns the `user:assign-role` and `user:revoke-role` Artisan commands
+    | will query when the supplied identifier isn't numeric. Defaults to
+    | `email` only so the package works on any standard Laravel users table;
+    | apps with a `username` column (or other unique handles) should append
+    | them here.
+    |
+    */
+
+    'user_lookup_fields' => [ 'email' ],
 
     /*
     |--------------------------------------------------------------------------
