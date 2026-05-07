@@ -18,6 +18,7 @@ it( 'belongs to many roles', function (): void {
     $editor     = Role::create( [ 'name' => 'editor' ] );
 
     $permission->roles()->attach( [ $admin->id, $editor->id ] );
+    $permission->load( 'roles' );
 
     expect( $permission->roles )->toHaveCount( 2 );
 } );

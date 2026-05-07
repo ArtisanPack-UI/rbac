@@ -271,7 +271,7 @@ Listen for these in any application or sibling package — `security-analytics` 
 composer test
 ```
 
-Tests run against an in-memory SQLite database via Orchestra Testbench. The package's own test suite covers role / permission models, traits, middleware, Artisan commands, Blade directives, Gate integration, observers, and the configurable model binding pattern.
+Tests run against an in-memory SQLite database via Orchestra Testbench. The package's own test suite covers role / permission models, traits, middleware, Artisan commands, Blade directives, Gate integration, observers, and the configurable model-binding pattern.
 
 ## Contributing
 

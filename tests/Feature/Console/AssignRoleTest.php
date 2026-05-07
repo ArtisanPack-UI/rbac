@@ -29,10 +29,14 @@ it( 'is idempotent when assigning the same role twice', function (): void {
     $user = TestUser::create( [ 'name' => 'Test', 'email' => 'test@example.com' ] );
     Role::create( [ 'name' => 'admin' ] );
 
-    $this->artisan( 'user:assign-role', [ 'user' => (string) $user->id, 'role' => 'admin' ] );
-    $this->artisan( 'user:assign-role', [ 'user' => (string) $user->id, 'role' => 'admin' ] );
+    $this->artisan( 'user:assign-role', [ 'user' => (string) $user->id, 'role' => 'admin' ] )
+        ->assertSuccessful();
+    $this->artisan( 'user:assign-role', [ 'user' => (string) $user->id, 'role' => 'admin' ] )
+        ->assertSuccessful();
 
-    expect( $user->fresh()->roles )->toHaveCount( 1 );
+    $fresh = $user->fresh();
+    $fresh->load( 'roles' );
+    expect( $fresh->roles )->toHaveCount( 1 );
 } );
 
 it( 'fails when the user does not exist', function (): void {
