@@ -32,8 +32,13 @@ trait HasRoles
     public function hasRole(Role|string|Collection $role): bool
     {
         if (is_string($role)) {
-            return $this->roles->contains('name', $role)
-                || $this->roles->contains('slug', $role);
+            // Prefer name match; fall back to slug. This avoids ambiguity
+            // when one row's name happens to equal another row's slug.
+            if ($this->roles->contains('name', $role)) {
+                return true;
+            }
+
+            return $this->roles->contains('slug', $role);
         }
 
         if ($role instanceof Role) {
@@ -104,9 +109,10 @@ trait HasRoles
 
         $model = $this->resolveRoleModel();
 
-        return $model::query()
-            ->where('name', $role)
-            ->orWhere('slug', $role)
-            ->first();
+        // Prefer name match; fall back to slug. Two queries instead of an
+        // orWhere so a `name === other-row's-slug` collision can't return
+        // the wrong row.
+        return $model::query()->where('name', $role)->first()
+            ?? $model::query()->where('slug', $role)->first();
     }
 }

@@ -69,3 +69,39 @@ it('matches hasPermissionTo by slug as well as name', function (): void {
     expect($user->hasPermissionTo('pages.publish'))->toBeTrue()
         ->and($user->hasPermissionTo('Publish Pages'))->toBeTrue();
 });
+
+it('rejects a Role save that would collide its name with another row\'s slug', function (): void {
+    Role::create(['name' => 'Editor', 'slug' => 'editor']);
+
+    expect(fn () => Role::create(['name' => 'editor', 'slug' => 'second']))
+        ->toThrow(RuntimeException::class);
+});
+
+it('rejects a Permission save that would collide its slug with another row\'s name', function (): void {
+    Permission::create(['name' => 'Publish Pages', 'slug' => 'pages.publish']);
+
+    expect(fn () => Permission::create(['name' => 'Other', 'slug' => 'Publish Pages']))
+        ->toThrow(RuntimeException::class);
+});
+
+it('allows a Role save where name and slug are equal on the same row', function (): void {
+    // Most common post-auto-derivation case: name === slug on the same
+    // row. The collision guard must allow this.
+    $role = Role::create(['name' => 'editor', 'slug' => 'editor']);
+
+    expect($role->name)->toBe('editor')
+        ->and($role->slug)->toBe('editor');
+});
+
+it('resolves hasRole to the name-matched row when another row has the same string as a slug', function (): void {
+    // Cross-row collision regression: Role A has name='shipper', Role B
+    // has name='Shipping' but slug='shipper'. assignRole('shipper') must
+    // resolve to Role A (name match wins).
+    $a = Role::create(['name' => 'shipper', 'slug' => 'shipper-role']);
+    Role::create(['name' => 'Shipping', 'slug' => 'shipper-2']);
+
+    $user = TestUser::create(['name' => 'Test', 'email' => 'collision@example.com']);
+    $user->assignRole('shipper');
+
+    expect($user->roles->pluck('id')->all())->toBe([$a->id]);
+});

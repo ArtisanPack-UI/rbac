@@ -17,13 +17,18 @@ class CreateRole extends Command
     {
         $model = config('artisanpack.rbac.models.role', Role::class);
 
+        $payload = array_map(
+            fn ($value) => is_string($value) ? trim($value) : $value,
+            [
+                'name' => $this->argument('name'),
+                'slug' => $this->option('slug'),
+                'description' => $this->option('description'),
+            ],
+        );
+
         $role = $model::create(
             array_filter(
-                [
-                    'name' => $this->argument('name'),
-                    'slug' => $this->option('slug'),
-                    'description' => $this->option('description'),
-                ],
+                $payload,
                 fn ($value) => $value !== null && $value !== '',
             ),
         );

@@ -22,8 +22,13 @@ trait HasPermissions
     {
         $permissions = $this->resolvePermissions();
 
-        return $permissions->contains('name', $permission)
-            || $permissions->contains('slug', $permission);
+        // Prefer name match; fall back to slug. This avoids ambiguity
+        // when one row's name happens to equal another row's slug.
+        if ($permissions->contains('name', $permission)) {
+            return true;
+        }
+
+        return $permissions->contains('slug', $permission);
     }
 
     /**

@@ -17,13 +17,18 @@ class CreatePermission extends Command
     {
         $model = config('artisanpack.rbac.models.permission', Permission::class);
 
+        $payload = array_map(
+            fn ($value) => is_string($value) ? trim($value) : $value,
+            [
+                'name' => $this->argument('name'),
+                'slug' => $this->option('slug'),
+                'description' => $this->option('description'),
+            ],
+        );
+
         $permission = $model::create(
             array_filter(
-                [
-                    'name' => $this->argument('name'),
-                    'slug' => $this->option('slug'),
-                    'description' => $this->option('description'),
-                ],
+                $payload,
                 fn ($value) => $value !== null && $value !== '',
             ),
         );

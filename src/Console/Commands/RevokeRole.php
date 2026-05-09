@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Schema;
 
 class RevokeRole extends Command
 {
-    protected $signature = 'user:revoke-role {user : The user ID, email, or username} {role : The role name}';
+    protected $signature = 'user:revoke-role {user : The user ID, email, or username} {role : The role name or slug}';
 
     protected $description = 'Revoke a role from a user';
 
@@ -21,7 +21,11 @@ class RevokeRole extends Command
         $roleModel = config('artisanpack.rbac.models.role', Role::class);
 
         $userArgument = $this->argument('user');
-        $role = $roleModel::where('name', $this->argument('role'))->first();
+        $roleArgument = $this->argument('role');
+        // Name first, slug fallback — two queries so a name/slug collision
+        // can't resolve to the wrong row.
+        $role = $roleModel::where('name', $roleArgument)->first()
+            ?? $roleModel::where('slug', $roleArgument)->first();
 
         $user = $this->resolveUser($userModel, $userArgument);
 
