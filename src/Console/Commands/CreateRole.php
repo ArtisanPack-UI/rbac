@@ -1,6 +1,6 @@
 <?php
 
-declare( strict_types=1 );
+declare(strict_types=1);
 
 namespace ArtisanPackUI\Rbac\Console\Commands;
 
@@ -15,16 +15,16 @@ class CreateRole extends Command
 
     public function handle(): int
     {
-        $model = config( 'artisanpack.rbac.models.role', Role::class );
+        $model = config('artisanpack.rbac.models.role', Role::class);
 
         $role = $model::create(
             [
-                'name'        => $this->argument( 'name' ),
-                'description' => $this->option( 'description' ),
+                'name' => $this->argument('name'),
+                'description' => $this->option('description'),
             ],
         );
 
-        $this->info( "Role `{$role->name}` created successfully." );
+        $this->info("Role `{$role->name}` created successfully.");
 
         return self::SUCCESS;
     }

@@ -1,6 +1,6 @@
 <?php
 
-declare( strict_types=1 );
+declare(strict_types=1);
 
 namespace ArtisanPackUI\Rbac\Http\Middleware;
 
@@ -19,20 +19,20 @@ use Illuminate\Support\Facades\Auth;
  */
 class CheckPermission
 {
-    public function handle( Request $request, Closure $next, string ...$permissions )
+    public function handle(Request $request, Closure $next, string ...$permissions)
     {
-        if ( Auth::guest() ) {
-            abort( 401 );
+        if (Auth::guest()) {
+            abort(401);
         }
 
         $user = Auth::user();
 
-        foreach ( $permissions as $permission ) {
-            if ( $user->can( $permission ) ) {
-                return $next( $request );
+        foreach ($permissions as $permission) {
+            if ($user->can($permission)) {
+                return $next($request);
             }
         }
 
-        abort( 403 );
+        abort(403);
     }
 }

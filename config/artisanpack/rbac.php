@@ -23,7 +23,7 @@ return [
     */
 
     'models' => [
-        'role'       => Role::class,
+        'role' => Role::class,
         'permission' => Permission::class,
     ],
 
@@ -40,9 +40,9 @@ return [
     */
 
     'tables' => [
-        'role_user'       => 'role_user',
+        'role_user' => 'role_user',
         'permission_role' => 'permission_role',
-        'users'           => 'users',
+        'users' => 'users',
     ],
 
     'foreign_keys' => [
@@ -62,7 +62,7 @@ return [
     |
     */
 
-    'user_lookup_fields' => [ 'email' ],
+    'user_lookup_fields' => ['email'],
 
     /*
     |--------------------------------------------------------------------------
@@ -79,7 +79,7 @@ return [
     'cache' => [
         'user_permissions_ttl' => 60,
         'permission_names_ttl' => 3600,
-        'tag'                  => 'rbac',
+        'tag' => 'rbac',
     ],
 
 ];

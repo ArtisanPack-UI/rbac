@@ -1,6 +1,6 @@
 <?php
 
-declare( strict_types=1 );
+declare(strict_types=1);
 
 namespace ArtisanPackUI\Rbac\Console\Commands;
 
@@ -15,16 +15,16 @@ class CreatePermission extends Command
 
     public function handle(): int
     {
-        $model = config( 'artisanpack.rbac.models.permission', Permission::class );
+        $model = config('artisanpack.rbac.models.permission', Permission::class);
 
         $permission = $model::create(
             [
-                'name'        => $this->argument( 'name' ),
-                'description' => $this->option( 'description' ),
+                'name' => $this->argument('name'),
+                'description' => $this->option('description'),
             ],
         );
 
-        $this->info( "Permission `{$permission->name}` created successfully." );
+        $this->info("Permission `{$permission->name}` created successfully.");
 
         return self::SUCCESS;
     }

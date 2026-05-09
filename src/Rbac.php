@@ -6,13 +6,11 @@
  * This is the main class for the package, accessed via the 'rbac' helper
  * function or the Rbac facade.
  *
- * @package    ArtisanPack_UI
- * @subpackage Rbac
  *
  * @since      1.0.0
  */
 
-declare( strict_types=1 );
+declare(strict_types=1);
 
 namespace ArtisanPackUI\Rbac;
 
@@ -22,8 +20,6 @@ namespace ArtisanPackUI\Rbac;
  * Add public API methods (role/permission lookups, etc.) here as the
  * package matures.
  *
- * @package    ArtisanPack_UI
- * @subpackage Rbac
  *
  * @since      1.0.0
  */
