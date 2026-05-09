@@ -16,3 +16,17 @@ it('stores the description option on the permission', function (): void {
 
     $this->assertDatabaseHas('permissions', ['name' => 'publish', 'description' => 'Publish articles']);
 });
+
+it('auto-derives the slug from the name when --slug is not supplied', function (): void {
+    $this->artisan('permission:create', ['name' => 'Edit Articles'])
+        ->assertSuccessful();
+
+    $this->assertDatabaseHas('permissions', ['name' => 'Edit Articles', 'slug' => 'edit-articles']);
+});
+
+it('accepts a custom --slug option', function (): void {
+    $this->artisan('permission:create', ['name' => 'publish', '--slug' => 'pages.publish'])
+        ->assertSuccessful();
+
+    $this->assertDatabaseHas('permissions', ['name' => 'publish', 'slug' => 'pages.publish']);
+});

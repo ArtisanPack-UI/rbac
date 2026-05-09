@@ -9,7 +9,7 @@ use Illuminate\Console\Command;
 
 class CreatePermission extends Command
 {
-    protected $signature = 'permission:create {name} {--description=}';
+    protected $signature = 'permission:create {name} {--slug=} {--description=}';
 
     protected $description = 'Create a new permission';
 
@@ -18,10 +18,14 @@ class CreatePermission extends Command
         $model = config('artisanpack.rbac.models.permission', Permission::class);
 
         $permission = $model::create(
-            [
-                'name' => $this->argument('name'),
-                'description' => $this->option('description'),
-            ],
+            array_filter(
+                [
+                    'name' => $this->argument('name'),
+                    'slug' => $this->option('slug'),
+                    'description' => $this->option('description'),
+                ],
+                fn ($value) => $value !== null && $value !== '',
+            ),
         );
 
         $this->info("Permission `{$permission->name}` created successfully.");

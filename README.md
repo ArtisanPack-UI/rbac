@@ -189,8 +189,8 @@ The list of known permission slugs is cached for `artisanpack.rbac.cache.permiss
 ## Artisan commands
 
 ```bash
-php artisan role:create {name} [--description=...]
-php artisan permission:create {name} [--description=...]
+php artisan role:create {name} [--slug=...] [--description=...]
+php artisan permission:create {name} [--slug=...] [--description=...]
 php artisan user:assign-role {user} {role}
 php artisan user:revoke-role {user} {role}
 ```
