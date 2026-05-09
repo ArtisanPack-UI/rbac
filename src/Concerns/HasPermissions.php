@@ -1,6 +1,6 @@
 <?php
 
-declare( strict_types=1 );
+declare(strict_types=1);
 
 namespace ArtisanPackUI\Rbac\Concerns;
 
@@ -18,54 +18,62 @@ use Illuminate\Support\Facades\Cache;
  */
 trait HasPermissions
 {
-    public function hasPermissionTo( string $permission ): bool
+    public function hasPermissionTo(string $permission): bool
     {
-        return $this->resolvePermissions()->contains( 'name', $permission );
+        $permissions = $this->resolvePermissions();
+
+        // Prefer name match; fall back to slug. This avoids ambiguity
+        // when one row's name happens to equal another row's slug.
+        if ($permissions->contains('name', $permission)) {
+            return true;
+        }
+
+        return $permissions->contains('slug', $permission);
     }
 
     /**
      * Backwards-compatible alias retained for callers that still use the
      * pre-extraction method name.
      */
-    public function hasPermission( string $permission ): bool
+    public function hasPermission(string $permission): bool
     {
-        return $this->hasPermissionTo( $permission );
+        return $this->hasPermissionTo($permission);
     }
 
     public function flushPermissionCache(): void
     {
         $cacheKey = $this->permissionCacheKey();
 
-        if ( $this->cacheSupportsTagging() ) {
-            Cache::tags( [ config( 'artisanpack.rbac.cache.tag', 'rbac' ) ] )->forget( $cacheKey );
+        if ($this->cacheSupportsTagging()) {
+            Cache::tags([config('artisanpack.rbac.cache.tag', 'rbac')])->forget($cacheKey);
 
             return;
         }
 
-        Cache::forget( $cacheKey );
+        Cache::forget($cacheKey);
     }
 
     protected function resolvePermissions(): Collection
     {
         $cacheKey = $this->permissionCacheKey();
-        $ttl      = (int) config( 'artisanpack.rbac.cache.user_permissions_ttl', 60 );
-        $loader   = fn () => $this->loadAllPermissions();
+        $ttl = (int) config('artisanpack.rbac.cache.user_permissions_ttl', 60);
+        $loader = fn () => $this->loadAllPermissions();
 
-        if ( $this->cacheSupportsTagging() ) {
-            return Cache::tags( [ config( 'artisanpack.rbac.cache.tag', 'rbac' ) ] )
-                ->remember( $cacheKey, $ttl, $loader );
+        if ($this->cacheSupportsTagging()) {
+            return Cache::tags([config('artisanpack.rbac.cache.tag', 'rbac')])
+                ->remember($cacheKey, $ttl, $loader);
         }
 
-        return Cache::remember( $cacheKey, $ttl, $loader );
+        return Cache::remember($cacheKey, $ttl, $loader);
     }
 
     protected function loadAllPermissions(): Collection
     {
         $all = collect();
 
-        $this->roles->each( function ( $role ) use ( &$all ): void {
-            $all = $all->merge( $this->collectPermissionsForRole( $role ) );
-        } );
+        $this->roles->each(function ($role) use (&$all): void {
+            $all = $all->merge($this->collectPermissionsForRole($role));
+        });
 
         return $all;
     }
@@ -73,17 +81,17 @@ trait HasPermissions
     /**
      * @param  array<int, int>  $visited
      */
-    protected function collectPermissionsForRole( Role $role, array $visited = [] ): Collection
+    protected function collectPermissionsForRole(Role $role, array $visited = []): Collection
     {
-        if ( in_array( $role->getKey(), $visited, true ) ) {
+        if (in_array($role->getKey(), $visited, true)) {
             return collect();
         }
 
-        $visited[]   = $role->getKey();
+        $visited[] = $role->getKey();
         $permissions = $role->permissions;
 
-        if ( $role->parent ) {
-            $permissions = $permissions->merge( $this->collectPermissionsForRole( $role->parent, $visited ) );
+        if ($role->parent) {
+            $permissions = $permissions->merge($this->collectPermissionsForRole($role->parent, $visited));
         }
 
         return $permissions;
@@ -96,6 +104,6 @@ trait HasPermissions
 
     protected function permissionCacheKey(): string
     {
-        return 'permissions_for_user_' . $this->getKey();
+        return 'permissions_for_user_'.$this->getKey();
     }
 }

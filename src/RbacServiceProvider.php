@@ -7,15 +7,13 @@
  * middleware aliases, Artisan commands, Blade directives, and Gate
  * integration.
  *
- * @package    ArtisanPack_UI
- * @subpackage Rbac
  *
  * @author     Jacob Martella <me@jacobmartella.com>
  *
  * @since      1.0.0
  */
 
-declare( strict_types=1 );
+declare(strict_types=1);
 
 namespace ArtisanPackUI\Rbac;
 
@@ -37,8 +35,6 @@ use Illuminate\Support\ServiceProvider;
 /**
  * Service provider for the Rbac package.
  *
- * @package    ArtisanPack_UI
- * @subpackage Rbac
  *
  * @since      1.0.0
  */
@@ -48,38 +44,34 @@ class RbacServiceProvider extends ServiceProvider
      * Registers any application services.
      *
      * @since 1.0.0
-     *
-     * @return void
      */
     public function register(): void
     {
         $this->mergeConfigFrom(
-            __DIR__ . '/../config/artisanpack/rbac.php',
+            __DIR__.'/../config/artisanpack/rbac.php',
             'artisanpack.rbac',
         );
 
-        $this->app->singleton( 'rbac', function ( $app ) {
-            return new Rbac();
-        } );
+        $this->app->singleton('rbac', function ($app) {
+            return new Rbac;
+        });
     }
 
     /**
      * Bootstraps any application services.
      *
      * @since 1.0.0
-     *
-     * @return void
      */
     public function boot(): void
     {
         $this->publishes(
             [
-                __DIR__ . '/../config/artisanpack/rbac.php' => config_path( 'artisanpack/rbac.php' ),
+                __DIR__.'/../config/artisanpack/rbac.php' => config_path('artisanpack/rbac.php'),
             ],
             'rbac-config',
         );
 
-        $this->loadMigrationsFrom( __DIR__ . '/../database/migrations' );
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 
         $this->registerObservers();
         $this->registerMiddleware();
@@ -94,11 +86,11 @@ class RbacServiceProvider extends ServiceProvider
      */
     protected function registerObservers(): void
     {
-        $roleModel       = config( 'artisanpack.rbac.models.role', Role::class );
-        $permissionModel = config( 'artisanpack.rbac.models.permission', Permission::class );
+        $roleModel = config('artisanpack.rbac.models.role', Role::class);
+        $permissionModel = config('artisanpack.rbac.models.permission', Permission::class);
 
-        $roleModel::observe( RoleObserver::class );
-        $permissionModel::observe( PermissionObserver::class );
+        $roleModel::observe(RoleObserver::class);
+        $permissionModel::observe(PermissionObserver::class);
     }
 
     /**
@@ -106,7 +98,7 @@ class RbacServiceProvider extends ServiceProvider
      */
     protected function registerMiddleware(): void
     {
-        $this->app['router']->aliasMiddleware( 'permission', CheckPermission::class );
+        $this->app['router']->aliasMiddleware('permission', CheckPermission::class);
     }
 
     /**
@@ -114,7 +106,7 @@ class RbacServiceProvider extends ServiceProvider
      */
     protected function registerCommands(): void
     {
-        if ( ! $this->app->runningInConsole() ) {
+        if (! $this->app->runningInConsole()) {
             return;
         }
 
@@ -133,21 +125,21 @@ class RbacServiceProvider extends ServiceProvider
      */
     protected function registerBladeDirectives(): void
     {
-        Blade::directive( 'role', function ( $role ) {
+        Blade::directive('role', function ($role) {
             return "<?php if(auth()->check() && method_exists(auth()->user(), 'hasRole') && auth()->user()->hasRole({$role})): ?>";
-        } );
+        });
 
-        Blade::directive( 'endrole', function () {
+        Blade::directive('endrole', function () {
             return '<?php endif; ?>';
-        } );
+        });
 
-        Blade::directive( 'permission', function ( $permission ) {
+        Blade::directive('permission', function ($permission) {
             return "<?php if(auth()->check() && auth()->user()->can({$permission})): ?>";
-        } );
+        });
 
-        Blade::directive( 'endpermission', function () {
+        Blade::directive('endpermission', function () {
             return '<?php endif; ?>';
-        } );
+        });
     }
 
     /**
@@ -157,19 +149,19 @@ class RbacServiceProvider extends ServiceProvider
      */
     protected function registerGate(): void
     {
-        Gate::before( function ( $user, $ability ) {
-            if ( ! method_exists( $user, 'hasPermissionTo' ) ) {
+        Gate::before(function ($user, $ability) {
+            if (! method_exists($user, 'hasPermissionTo')) {
                 return null;
             }
 
             $permissionNames = $this->getCachedPermissionNames();
 
-            if ( in_array( $ability, $permissionNames, true ) ) {
-                return $user->hasPermissionTo( $ability );
+            if (in_array($ability, $permissionNames, true)) {
+                return $user->hasPermissionTo($ability);
             }
 
             return null;
-        } );
+        });
     }
 
     /**
@@ -178,11 +170,11 @@ class RbacServiceProvider extends ServiceProvider
      */
     protected function registerPermissionCacheInvalidators(): void
     {
-        $permissionModel = config( 'artisanpack.rbac.models.permission', Permission::class );
+        $permissionModel = config('artisanpack.rbac.models.permission', Permission::class);
 
-        $permissionModel::created( fn () => $this->flushPermissionNamesCache() );
-        $permissionModel::updated( fn () => $this->flushPermissionNamesCache() );
-        $permissionModel::deleted( fn () => $this->flushPermissionNamesCache() );
+        $permissionModel::created(fn () => $this->flushPermissionNamesCache());
+        $permissionModel::updated(fn () => $this->flushPermissionNamesCache());
+        $permissionModel::deleted(fn () => $this->flushPermissionNamesCache());
     }
 
     /**
@@ -192,16 +184,22 @@ class RbacServiceProvider extends ServiceProvider
      */
     protected function getCachedPermissionNames(): array
     {
-        $permissionModel = config( 'artisanpack.rbac.models.permission', Permission::class );
-        $cacheKey        = 'rbac_permission_names';
-        $ttl             = (int) config( 'artisanpack.rbac.cache.permission_names_ttl', 3600 );
+        $permissionModel = config('artisanpack.rbac.models.permission', Permission::class);
+        $cacheKey = 'rbac_permission_names';
+        $ttl = (int) config('artisanpack.rbac.cache.permission_names_ttl', 3600);
 
-        if ( Cache::getStore() instanceof TaggableStore ) {
-            return Cache::tags( [ config( 'artisanpack.rbac.cache.tag', 'rbac' ) ] )
-                ->remember( $cacheKey, $ttl, fn () => $permissionModel::pluck( 'name' )->toArray() );
+        if (Cache::getStore() instanceof TaggableStore) {
+            return Cache::tags([config('artisanpack.rbac.cache.tag', 'rbac')])
+                ->remember($cacheKey, $ttl, fn () => array_values(array_unique(array_merge(
+                    $permissionModel::pluck('name')->toArray(),
+                    $permissionModel::pluck('slug')->toArray(),
+                ))));
         }
 
-        return Cache::remember( $cacheKey, $ttl, fn () => $permissionModel::pluck( 'name' )->toArray() );
+        return Cache::remember($cacheKey, $ttl, fn () => array_values(array_unique(array_merge(
+            $permissionModel::pluck('name')->toArray(),
+            $permissionModel::pluck('slug')->toArray(),
+        ))));
     }
 
     /**
@@ -210,14 +208,14 @@ class RbacServiceProvider extends ServiceProvider
     protected function flushPermissionNamesCache(): void
     {
         $cacheKey = 'rbac_permission_names';
-        $tag      = config( 'artisanpack.rbac.cache.tag', 'rbac' );
+        $tag = config('artisanpack.rbac.cache.tag', 'rbac');
 
-        if ( Cache::getStore() instanceof TaggableStore ) {
-            Cache::tags( [ $tag ] )->forget( $cacheKey );
+        if (Cache::getStore() instanceof TaggableStore) {
+            Cache::tags([$tag])->forget($cacheKey);
 
             return;
         }
 
-        Cache::forget( $cacheKey );
+        Cache::forget($cacheKey);
     }
 }

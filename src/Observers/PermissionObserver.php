@@ -1,6 +1,6 @@
 <?php
 
-declare( strict_types=1 );
+declare(strict_types=1);
 
 namespace ArtisanPackUI\Rbac\Observers;
 
@@ -15,21 +15,21 @@ use Illuminate\Support\Facades\Event;
  */
 class PermissionObserver
 {
-    public function created( Permission $permission ): void
+    public function created(Permission $permission): void
     {
-        Event::dispatch( 'rbac.permission.created', [ $permission ] );
+        Event::dispatch('rbac.permission.created', [$permission]);
     }
 
-    public function updated( Permission $permission ): void
+    public function updated(Permission $permission): void
     {
         Event::dispatch(
             'rbac.permission.updated',
-            [ $permission, $permission->getChanges(), $permission->getOriginal() ],
+            [$permission, $permission->getChanges(), $permission->getOriginal()],
         );
     }
 
-    public function deleted( Permission $permission ): void
+    public function deleted(Permission $permission): void
     {
-        Event::dispatch( 'rbac.permission.deleted', [ $permission ] );
+        Event::dispatch('rbac.permission.deleted', [$permission]);
     }
 }

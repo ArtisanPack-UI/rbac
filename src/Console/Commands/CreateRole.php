@@ -1,6 +1,6 @@
 <?php
 
-declare( strict_types=1 );
+declare(strict_types=1);
 
 namespace ArtisanPackUI\Rbac\Console\Commands;
 
@@ -9,22 +9,31 @@ use Illuminate\Console\Command;
 
 class CreateRole extends Command
 {
-    protected $signature = 'role:create {name} {--description=}';
+    protected $signature = 'role:create {name} {--slug=} {--description=}';
 
     protected $description = 'Create a new role';
 
     public function handle(): int
     {
-        $model = config( 'artisanpack.rbac.models.role', Role::class );
+        $model = config('artisanpack.rbac.models.role', Role::class);
 
-        $role = $model::create(
+        $payload = array_map(
+            fn ($value) => is_string($value) ? trim($value) : $value,
             [
-                'name'        => $this->argument( 'name' ),
-                'description' => $this->option( 'description' ),
+                'name' => $this->argument('name'),
+                'slug' => $this->option('slug'),
+                'description' => $this->option('description'),
             ],
         );
 
-        $this->info( "Role `{$role->name}` created successfully." );
+        $role = $model::create(
+            array_filter(
+                $payload,
+                fn ($value) => $value !== null && $value !== '',
+            ),
+        );
+
+        $this->info("Role `{$role->name}` created successfully.");
 
         return self::SUCCESS;
     }

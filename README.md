@@ -76,6 +76,7 @@ $user->can('posts.publish');             // true (via Gate integration)
 | Field | Type | Notes |
 |---|---|---|
 | `name` | string | unique |
+| `slug` | string | unique; auto-derived from `name` via `Str::slug()` if not provided |
 | `description` | string\|null | |
 | `parent_id` | int\|null | foreign key to `roles.id`; `set null` on parent delete |
 
@@ -86,6 +87,8 @@ Relationships:
 - `parent()` → `BelongsTo Role`
 - `children()` → `HasMany Role`
 
+Slug helpers: `Role::findBySlug('editor')`, `Role::whereSlug('editor')->first()`. `hasRole('editor')` and `assignRole('editor')` match against either `name` or `slug`.
+
 Deleting a role detaches its permissions and nulls `parent_id` on its children.
 
 ### Permission
@@ -95,11 +98,14 @@ Deleting a role detaches its permissions and nulls `parent_id` on its children.
 | Field | Type | Notes |
 |---|---|---|
 | `name` | string | unique |
+| `slug` | string | unique; auto-derived from `name` via `Str::slug()` if not provided |
 | `description` | string\|null | |
 
 Relationships:
 
 - `roles()` → `BelongsToMany Role`
+
+Slug helpers: `Permission::findBySlug('pages.publish')`, `Permission::whereSlug('pages.publish')->first()`. `hasPermissionTo('pages.publish')` and the Gate integration both match against either `name` or `slug`.
 
 Deleting a permission detaches it from all roles.
 
@@ -183,8 +189,8 @@ The list of known permission slugs is cached for `artisanpack.rbac.cache.permiss
 ## Artisan commands
 
 ```bash
-php artisan role:create {name} [--description=...]
-php artisan permission:create {name} [--description=...]
+php artisan role:create {name} [--slug=...] [--description=...]
+php artisan permission:create {name} [--slug=...] [--description=...]
 php artisan user:assign-role {user} {role}
 php artisan user:revoke-role {user} {role}
 ```

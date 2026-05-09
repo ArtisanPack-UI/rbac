@@ -1,6 +1,6 @@
 <?php
 
-declare( strict_types=1 );
+declare(strict_types=1);
 
 namespace ArtisanPackUI\Rbac\Concerns;
 
@@ -29,31 +29,37 @@ trait HasRoles
         );
     }
 
-    public function hasRole( Role|string|Collection $role ): bool
+    public function hasRole(Role|string|Collection $role): bool
     {
-        if ( is_string( $role ) ) {
-            return $this->roles->contains( 'name', $role );
+        if (is_string($role)) {
+            // Prefer name match; fall back to slug. This avoids ambiguity
+            // when one row's name happens to equal another row's slug.
+            if ($this->roles->contains('name', $role)) {
+                return true;
+            }
+
+            return $this->roles->contains('slug', $role);
         }
 
-        if ( $role instanceof Role ) {
-            return $this->roles->contains( 'id', $role->getKey() );
+        if ($role instanceof Role) {
+            return $this->roles->contains('id', $role->getKey());
         }
 
         $incomingIds = $role->map->getKey()->all();
-        $currentIds  = $this->roles->map->getKey()->all();
+        $currentIds = $this->roles->map->getKey()->all();
 
-        return count( array_intersect( $incomingIds, $currentIds ) ) > 0;
+        return count(array_intersect($incomingIds, $currentIds)) > 0;
     }
 
-    public function assignRole( Role|string $role ): static
+    public function assignRole(Role|string $role): static
     {
-        $resolved = $this->resolveRoleInstance( $role );
+        $resolved = $this->resolveRoleInstance($role);
 
-        if ( null !== $resolved ) {
-            $this->roles()->syncWithoutDetaching( [ $resolved->getKey() ] );
-            Event::dispatch( 'rbac.user.role_assigned', [ $this, $resolved ] );
+        if ($resolved !== null) {
+            $this->roles()->syncWithoutDetaching([$resolved->getKey()]);
+            Event::dispatch('rbac.user.role_assigned', [$this, $resolved]);
 
-            if ( method_exists( $this, 'flushPermissionCache' ) ) {
+            if (method_exists($this, 'flushPermissionCache')) {
                 $this->flushPermissionCache();
             }
         }
@@ -61,15 +67,15 @@ trait HasRoles
         return $this;
     }
 
-    public function removeRole( Role|string $role ): static
+    public function removeRole(Role|string $role): static
     {
-        $resolved = $this->resolveRoleInstance( $role );
+        $resolved = $this->resolveRoleInstance($role);
 
-        if ( null !== $resolved ) {
-            $this->roles()->detach( $resolved->getKey() );
-            Event::dispatch( 'rbac.user.role_removed', [ $this, $resolved ] );
+        if ($resolved !== null) {
+            $this->roles()->detach($resolved->getKey());
+            Event::dispatch('rbac.user.role_removed', [$this, $resolved]);
 
-            if ( method_exists( $this, 'flushPermissionCache' ) ) {
+            if (method_exists($this, 'flushPermissionCache')) {
                 $this->flushPermissionCache();
             }
         }
@@ -79,12 +85,12 @@ trait HasRoles
 
     protected function getRoleUserPivotTable(): string
     {
-        return config( 'artisanpack.rbac.tables.role_user', 'role_user' );
+        return config('artisanpack.rbac.tables.role_user', 'role_user');
     }
 
     protected function getRoleUserForeignKey(): string
     {
-        return config( 'artisanpack.rbac.foreign_keys.user', 'user_id' );
+        return config('artisanpack.rbac.foreign_keys.user', 'user_id');
     }
 
     /**
@@ -92,17 +98,21 @@ trait HasRoles
      */
     protected function resolveRoleModel(): string
     {
-        return config( 'artisanpack.rbac.models.role', Role::class );
+        return config('artisanpack.rbac.models.role', Role::class);
     }
 
-    protected function resolveRoleInstance( Role|string $role ): ?Role
+    protected function resolveRoleInstance(Role|string $role): ?Role
     {
-        if ( $role instanceof Role ) {
+        if ($role instanceof Role) {
             return $role;
         }
 
         $model = $this->resolveRoleModel();
 
-        return $model::where( 'name', $role )->first();
+        // Prefer name match; fall back to slug. Two queries instead of an
+        // orWhere so a `name === other-row's-slug` collision can't return
+        // the wrong row.
+        return $model::query()->where('name', $role)->first()
+            ?? $model::query()->where('slug', $role)->first();
     }
 }

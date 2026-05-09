@@ -1,6 +1,6 @@
 <?php
 
-declare( strict_types=1 );
+declare(strict_types=1);
 
 namespace ArtisanPackUI\Rbac\Console\Commands;
 
@@ -9,22 +9,31 @@ use Illuminate\Console\Command;
 
 class CreatePermission extends Command
 {
-    protected $signature = 'permission:create {name} {--description=}';
+    protected $signature = 'permission:create {name} {--slug=} {--description=}';
 
     protected $description = 'Create a new permission';
 
     public function handle(): int
     {
-        $model = config( 'artisanpack.rbac.models.permission', Permission::class );
+        $model = config('artisanpack.rbac.models.permission', Permission::class);
 
-        $permission = $model::create(
+        $payload = array_map(
+            fn ($value) => is_string($value) ? trim($value) : $value,
             [
-                'name'        => $this->argument( 'name' ),
-                'description' => $this->option( 'description' ),
+                'name' => $this->argument('name'),
+                'slug' => $this->option('slug'),
+                'description' => $this->option('description'),
             ],
         );
 
-        $this->info( "Permission `{$permission->name}` created successfully." );
+        $permission = $model::create(
+            array_filter(
+                $payload,
+                fn ($value) => $value !== null && $value !== '',
+            ),
+        );
+
+        $this->info("Permission `{$permission->name}` created successfully.");
 
         return self::SUCCESS;
     }

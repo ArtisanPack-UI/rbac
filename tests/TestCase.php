@@ -1,11 +1,12 @@
 <?php
 
-declare( strict_types=1 );
+declare(strict_types=1);
 
 namespace Tests;
 
 use ArtisanPackUI\Rbac\RbacServiceProvider;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 use Tests\Models\TestUser;
@@ -34,11 +35,10 @@ abstract class TestCase extends BaseTestCase
     /**
      * Gets package providers.
      *
-     * @param  \Illuminate\Foundation\Application  $app  The application instance.
-     *
+     * @param  Application  $app  The application instance.
      * @return array<int, class-string> Array of service provider class names.
      */
-    protected function getPackageProviders( $app ): array
+    protected function getPackageProviders($app): array
     {
         return [
             RbacServiceProvider::class,
@@ -48,21 +48,21 @@ abstract class TestCase extends BaseTestCase
     /**
      * Defines environment setup.
      *
-     * @param  \Illuminate\Foundation\Application  $app  The application instance.
+     * @param  Application  $app  The application instance.
      */
-    protected function defineEnvironment( $app ): void
+    protected function defineEnvironment($app): void
     {
-        $app['config']->set( 'app.key', 'base64:' . base64_encode( random_bytes( 32 ) ) );
+        $app['config']->set('app.key', 'base64:'.base64_encode(random_bytes(32)));
 
-        $app['config']->set( 'database.default', 'testbench' );
-        $app['config']->set( 'database.connections.testbench', [
-            'driver'                  => 'sqlite',
-            'database'                => ':memory:',
-            'prefix'                  => '',
+        $app['config']->set('database.default', 'testbench');
+        $app['config']->set('database.connections.testbench', [
+            'driver' => 'sqlite',
+            'database' => ':memory:',
+            'prefix' => '',
             'foreign_key_constraints' => true,
-        ] );
+        ]);
 
-        $app['config']->set( 'auth.providers.users.model', TestUser::class );
+        $app['config']->set('auth.providers.users.model', TestUser::class);
     }
 
     /**
@@ -73,12 +73,12 @@ abstract class TestCase extends BaseTestCase
      */
     protected function defineDatabaseMigrations(): void
     {
-        $this->app['db']->connection()->getSchemaBuilder()->create( 'users', function ( Blueprint $table ): void {
-            $table->increments( 'id' );
-            $table->string( 'name' );
-            $table->string( 'email' )->unique();
-            $table->string( 'password' )->nullable();
+        $this->app['db']->connection()->getSchemaBuilder()->create('users', function (Blueprint $table): void {
+            $table->increments('id');
+            $table->string('name');
+            $table->string('email')->unique();
+            $table->string('password')->nullable();
             $table->timestamps();
-        } );
+        });
     }
 }

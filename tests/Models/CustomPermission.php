@@ -1,6 +1,6 @@
 <?php
 
-declare( strict_types=1 );
+declare(strict_types=1);
 
 namespace Tests\Models;
 
@@ -12,6 +12,6 @@ class CustomPermission extends Permission
 
     public function customLabel(): string
     {
-        return 'custom:' . $this->name;
+        return 'custom:'.$this->name;
     }
 }
