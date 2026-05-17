@@ -2,8 +2,17 @@
   "name": "artisanpack-ui/rbac",
   "description": "Role-based access control for Laravel — roles with hierarchy, permissions, Blade directives, middleware, and Gate integration.",
   "type": "library",
-  "license": "GPL-3.0-or-later",
+  "license": "MIT",
   "version": "0.1.0",
+  "keywords": [
+    "laravel",
+    "security",
+    "rbac",
+    "roles",
+    "permissions",
+    "authorization",
+    "access-control"
+  ],
   "autoload": {
     "psr-4": {
       "ArtisanPackUI\\Rbac\\": "src/"
@@ -20,7 +29,7 @@
   "authors": [
     {
       "name": "Jacob Martella",
-      "email": "me@jacobmartella.com"
+      "email": "support@artisanpackui.dev"
     }
   ],
   "require": {

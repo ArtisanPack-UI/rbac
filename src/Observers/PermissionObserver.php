@@ -1,6 +1,17 @@
 <?php
 
-declare(strict_types=1);
+/**
+ * Permission Eloquent observer.
+ *
+ * @package    ArtisanPack_UI
+ * @subpackage Rbac
+ *
+ * @author     Jacob Martella <support@artisanpackui.dev>
+ *
+ * @since      1.0.0
+ */
+
+declare( strict_types=1 );
 
 namespace ArtisanPackUI\Rbac\Observers;
 
@@ -15,12 +26,12 @@ use Illuminate\Support\Facades\Event;
  */
 class PermissionObserver
 {
-    public function created(Permission $permission): void
+    public function created( Permission $permission ): void
     {
-        Event::dispatch('rbac.permission.created', [$permission]);
+        Event::dispatch( 'rbac.permission.created', [$permission] );
     }
 
-    public function updated(Permission $permission): void
+    public function updated( Permission $permission ): void
     {
         Event::dispatch(
             'rbac.permission.updated',
@@ -28,8 +39,8 @@ class PermissionObserver
         );
     }
 
-    public function deleted(Permission $permission): void
+    public function deleted( Permission $permission ): void
     {
-        Event::dispatch('rbac.permission.deleted', [$permission]);
+        Event::dispatch( 'rbac.permission.deleted', [$permission] );
     }
 }

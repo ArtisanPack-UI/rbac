@@ -1,15 +1,17 @@
 <?php
 
 /**
- * Rbac Facade.
+ * Rbac Facade — static accessor for the Rbac class.
  *
- * Provides static access to the Rbac class.
+ * @package    ArtisanPack_UI
+ * @subpackage Rbac
  *
+ * @author     Jacob Martella <support@artisanpackui.dev>
  *
  * @since      1.0.0
  */
 
-declare(strict_types=1);
+declare( strict_types=1 );
 
 namespace ArtisanPackUI\Rbac\Facades;
 

@@ -13,9 +13,9 @@ use Tests\TestCase;
 |
 */
 
-pest()->extend(TestCase::class)
+pest()->extend( TestCase::class )
  // ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
-    ->in('Feature');
+    ->in( 'Feature' );
 
 /*
 |--------------------------------------------------------------------------
@@ -28,9 +28,9 @@ pest()->extend(TestCase::class)
 |
 */
 
-expect()->extend('toBeOne', function () {
-    return $this->toBe(1);
-});
+expect()->extend( 'toBeOne', function () {
+    return $this->toBe( 1 );
+} );
 
 /*
 |--------------------------------------------------------------------------
