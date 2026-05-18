@@ -80,6 +80,6 @@ abstract class TestCase extends BaseTestCase
             $table->string( 'email' )->unique();
             $table->string( 'password' )->nullable();
             $table->timestamps();
-        });
+        } );
     }
 }

@@ -28,5 +28,5 @@ it( 'accepts a custom --slug option', function (): void {
     $this->artisan( 'role:create', ['name' => 'Site Owner', '--slug' => 'owner'] )
         ->assertSuccessful();
 
-    $this->assertDatabaseHas( 'roles', ['name' => 'Site Owner', 'slug' => 'owner']);
-});
+    $this->assertDatabaseHas( 'roles', ['name' => 'Site Owner', 'slug' => 'owner'] );
+} );

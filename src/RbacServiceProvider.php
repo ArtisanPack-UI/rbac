@@ -212,8 +212,8 @@ class RbacServiceProvider extends ServiceProvider
         $cacheKey = 'rbac_permission_names';
         $tag      = config( 'artisanpack.rbac.cache.tag', 'rbac' );
 
-        if ( Cache::getStore() instanceof TaggableStore) {
-            Cache::tags( [$tag])->forget( $cacheKey);
+        if ( Cache::getStore() instanceof TaggableStore ) {
+            Cache::tags( [$tag] )->forget( $cacheKey );
 
             return;
         }

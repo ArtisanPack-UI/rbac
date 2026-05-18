@@ -92,12 +92,12 @@ it( 'removes a role', function (): void {
 it( 'dispatches events when roles are assigned and removed', function (): void {
     Event::fake();
 
-    $user = TestUser::create( ['name' => 'Test', 'email' => 'test@example.com']);
-    Role::create( ['name' => 'admin']);
+    $user = TestUser::create( ['name' => 'Test', 'email' => 'test@example.com'] );
+    Role::create( ['name' => 'admin'] );
 
-    $user->assignRole( 'admin');
-    $user->removeRole( 'admin');
+    $user->assignRole( 'admin' );
+    $user->removeRole( 'admin' );
 
-    Event::assertDispatched( 'rbac.user.role_assigned');
-    Event::assertDispatched( 'rbac.user.role_removed');
+    Event::assertDispatched( 'rbac.user.role_assigned' );
+    Event::assertDispatched( 'rbac.user.role_removed' );
 });

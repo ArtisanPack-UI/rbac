@@ -11,4 +11,4 @@ it( 'declares the expected fillable attributes on Role', function (): void {
 
 it( 'declares the expected fillable attributes on Permission', function (): void {
     expect( (new Permission)->getFillable() )->toBe( ['name', 'slug', 'description'] );
-});
+} );

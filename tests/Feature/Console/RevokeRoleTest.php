@@ -26,6 +26,6 @@ it( 'fails when the user does not exist', function (): void {
 it( 'fails when the role does not exist', function (): void {
     $user = TestUser::create( ['name' => 'Test', 'email' => 'test@example.com'] );
 
-    $this->artisan( 'user:revoke-role', ['user' => (string) $user->id, 'role' => 'ghost'])
+    $this->artisan( 'user:revoke-role', ['user' => (string) $user->id, 'role' => 'ghost'] )
         ->assertFailed();
-});
+} );

@@ -106,7 +106,7 @@ class Permission extends Model
     {
         parent::boot();
 
-        static::deleting( function ( $permission): void {
+        static::deleting( function ( $permission ): void {
             $permission->roles()->detach();
         });
     }

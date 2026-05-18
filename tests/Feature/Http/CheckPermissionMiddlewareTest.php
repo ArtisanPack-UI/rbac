@@ -49,9 +49,9 @@ it( 'allows access when the user has any of multiple permissions', function (): 
 } );
 
 it( 'denies access when the user has none of the listed permissions', function (): void {
-    $user = TestUser::create( ['name' => 'Test', 'email' => 'test@example.com']);
+    $user = TestUser::create( ['name' => 'Test', 'email' => 'test@example.com'] );
 
-    $this->actingAs( $user)
-        ->get( '/multi-permission')
-        ->assertStatus( 403);
+    $this->actingAs( $user )
+        ->get( '/multi-permission' )
+        ->assertStatus( 403 );
 });

@@ -46,9 +46,9 @@ it( 'detaches permissions when a role is deleted', function (): void {
 
 it( 'nulls parent_id on children when a parent role is deleted', function (): void {
     $admin  = Role::create( ['name' => 'admin'] );
-    $editor = Role::create( ['name' => 'editor', 'parent_id' => $admin->id]);
+    $editor = Role::create( ['name' => 'editor', 'parent_id' => $admin->id] );
 
     $admin->delete();
 
-    expect( $editor->fresh()->parent_id)->toBeNull();
-});
+    expect( $editor->fresh()->parent_id )->toBeNull();
+} );

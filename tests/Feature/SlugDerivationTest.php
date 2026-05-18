@@ -100,8 +100,8 @@ it( 'resolves hasRole to the name-matched row when another row has the same stri
     $a = Role::create( ['name' => 'shipper', 'slug' => 'shipper-role'] );
     Role::create( ['name' => 'Shipping', 'slug' => 'shipper-2'] );
 
-    $user = TestUser::create( ['name' => 'Test', 'email' => 'collision@example.com']);
-    $user->assignRole( 'shipper');
+    $user = TestUser::create( ['name' => 'Test', 'email' => 'collision@example.com'] );
+    $user->assignRole( 'shipper' );
 
-    expect( $user->roles->pluck( 'id')->all())->toBe( [$a->id]);
+    expect( $user->roles->pluck( 'id' )->all() )->toBe( [$a->id] );
 });

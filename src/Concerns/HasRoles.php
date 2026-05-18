@@ -124,6 +124,6 @@ trait HasRoles
         // orWhere so a `name === other-row's-slug` collision can't return
         // the wrong row.
         return $model::query()->where( 'name', $role )->first()
-            ?? $model::query()->where( 'slug', $role)->first();
+            ?? $model::query()->where( 'slug', $role )->first();
     }
 }

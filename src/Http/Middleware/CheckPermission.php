@@ -44,6 +44,6 @@ class CheckPermission
             }
         }
 
-        abort( 403);
+        abort( 403 );
     }
 }

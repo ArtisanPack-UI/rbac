@@ -68,9 +68,9 @@ it( 'dispatches rbac.permission.updated when a permission is updated', function 
 
 it( 'dispatches rbac.permission.deleted when a permission is deleted', function (): void {
     $permission = Permission::create( ['name' => 'edit-articles'] );
-    $captured   = captureEvent( 'rbac.permission.deleted');
+    $captured   = captureEvent( 'rbac.permission.deleted' );
 
     $permission->delete();
 
-    expect( $captured->fired)->toBeTrue();
+    expect( $captured->fired )->toBeTrue();
 });

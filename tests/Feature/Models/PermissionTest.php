@@ -30,5 +30,5 @@ it( 'detaches roles when a permission is deleted', function (): void {
 
     $permission->delete();
 
-    $this->assertDatabaseMissing( 'permission_role', ['permission_id' => $permission->id]);
-});
+    $this->assertDatabaseMissing( 'permission_role', ['permission_id' => $permission->id] );
+} );

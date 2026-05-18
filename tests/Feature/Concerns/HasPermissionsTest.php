@@ -62,9 +62,9 @@ it( 'flushes the permission cache on demand', function (): void {
 
     expect( $user->hasPermissionTo( 'edit-articles' ) )->toBeTrue();
 
-    $role->permissions()->detach( $permission);
-    $user->load( 'roles.permissions');
+    $role->permissions()->detach( $permission );
+    $user->load( 'roles.permissions' );
     $user->flushPermissionCache();
 
-    expect( $user->hasPermissionTo( 'edit-articles'))->toBeFalse();
+    expect( $user->hasPermissionTo( 'edit-articles' ) )->toBeFalse();
 });

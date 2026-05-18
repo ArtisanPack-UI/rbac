@@ -50,6 +50,6 @@ it( 'falls back to base models when no override is configured', function (): voi
     $role       = Role::create( ['name' => 'admin'] );
     $permission = Permission::create( ['name' => 'edit-articles'] );
 
-    expect( $role)->toBeInstanceOf( Role::class);
-    expect( $permission)->toBeInstanceOf( Permission::class);
+    expect( $role )->toBeInstanceOf( Role::class );
+    expect( $permission )->toBeInstanceOf( Permission::class );
 });

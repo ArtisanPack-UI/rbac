@@ -28,5 +28,5 @@ it( 'accepts a custom --slug option', function (): void {
     $this->artisan( 'permission:create', ['name' => 'publish', '--slug' => 'pages.publish'] )
         ->assertSuccessful();
 
-    $this->assertDatabaseHas( 'permissions', ['name' => 'publish', 'slug' => 'pages.publish']);
-});
+    $this->assertDatabaseHas( 'permissions', ['name' => 'publish', 'slug' => 'pages.publish'] );
+} );

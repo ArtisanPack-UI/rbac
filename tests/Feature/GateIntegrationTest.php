@@ -54,8 +54,8 @@ it( 'invalidates the permission-name cache when permissions change', function ()
 
     $permission = Permission::create( ['name' => 'publish'] );
     $role->permissions()->attach( $permission );
-    $user->load( 'roles.permissions');
+    $user->load( 'roles.permissions' );
     $user->flushPermissionCache();
 
-    expect( $user->can( 'publish'))->toBeTrue();
+    expect( $user->can( 'publish' ) )->toBeTrue();
 });

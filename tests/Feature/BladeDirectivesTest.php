@@ -43,7 +43,7 @@ it( 'renders the @permission block when the user has the permission', function (
 it( 'renders nothing for unauthenticated users in @permission blocks', function (): void {
     Permission::create( ['name' => 'edit-articles'] );
 
-    $rendered = view()->file( __DIR__ . '/../views/permission-directive.blade.php')->render();
+    $rendered = view()->file( __DIR__ . '/../views/permission-directive.blade.php' )->render();
 
-    expect( $rendered)->not->toContain( 'User can edit articles');
+    expect( $rendered )->not->toContain( 'User can edit articles' );
 });
