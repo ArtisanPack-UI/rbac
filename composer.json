@@ -3,7 +3,7 @@
   "description": "Role-based access control for Laravel — roles with hierarchy, permissions, Blade directives, middleware, and Gate integration.",
   "type": "library",
   "license": "MIT",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "keywords": [
     "laravel",
     "security",
