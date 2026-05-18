@@ -104,4 +104,4 @@ it( 'resolves hasRole to the name-matched row when another row has the same stri
     $user->assignRole( 'shipper' );
 
     expect( $user->roles->pluck( 'id' )->all() )->toBe( [$a->id] );
-});
+} );

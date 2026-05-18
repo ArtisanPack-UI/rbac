@@ -54,4 +54,4 @@ it( 'denies access when the user has none of the listed permissions', function (
     $this->actingAs( $user )
         ->get( '/multi-permission' )
         ->assertStatus( 403 );
-});
+} );

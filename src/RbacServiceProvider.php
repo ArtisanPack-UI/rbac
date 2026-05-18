@@ -218,6 +218,6 @@ class RbacServiceProvider extends ServiceProvider
             return;
         }
 
-        Cache::forget( $cacheKey);
+        Cache::forget( $cacheKey );
     }
 }

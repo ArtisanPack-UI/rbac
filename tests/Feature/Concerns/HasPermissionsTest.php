@@ -67,4 +67,4 @@ it( 'flushes the permission cache on demand', function (): void {
     $user->flushPermissionCache();
 
     expect( $user->hasPermissionTo( 'edit-articles' ) )->toBeFalse();
-});
+} );

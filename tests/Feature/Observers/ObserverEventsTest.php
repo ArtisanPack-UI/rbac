@@ -73,4 +73,4 @@ it( 'dispatches rbac.permission.deleted when a permission is deleted', function 
     $permission->delete();
 
     expect( $captured->fired )->toBeTrue();
-});
+} );

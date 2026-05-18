@@ -100,4 +100,4 @@ it( 'dispatches events when roles are assigned and removed', function (): void {
 
     Event::assertDispatched( 'rbac.user.role_assigned' );
     Event::assertDispatched( 'rbac.user.role_removed' );
-});
+} );

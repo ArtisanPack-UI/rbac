@@ -58,4 +58,4 @@ it( 'invalidates the permission-name cache when permissions change', function ()
     $user->flushPermissionCache();
 
     expect( $user->can( 'publish' ) )->toBeTrue();
-});
+} );

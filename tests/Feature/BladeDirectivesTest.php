@@ -46,4 +46,4 @@ it( 'renders nothing for unauthenticated users in @permission blocks', function 
     $rendered = view()->file( __DIR__ . '/../views/permission-directive.blade.php' )->render();
 
     expect( $rendered )->not->toContain( 'User can edit articles' );
-});
+} );
