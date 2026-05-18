@@ -89,7 +89,7 @@ See [Caching](../advanced/caching.md) for tuning.
 - **Race condition during permission creation**: if a new permission is created and a Gate check fires before the cache invalidator runs, the check falls through to policies. The next request picks up the fresh cache. This window is microseconds in normal apps; if it matters for your use case, invalidate manually after the create — conditionally on the cache driver:
 
   ```php
-  if ( Cache::getStore() instanceof Illuminate\Cache\TaggableStore ) {
+  if ( Cache::getStore() instanceof \Illuminate\Cache\TaggableStore ) {
       Cache::tags( config( 'artisanpack.rbac.cache.tag' ) )->flush();
   } else {
       Cache::forget( 'rbac_permission_names' );
