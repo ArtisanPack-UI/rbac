@@ -86,4 +86,12 @@ See [Caching](../advanced/caching.md) for tuning.
 
 - **User model without `hasPermissionTo`**: the hook returns `null` immediately, so non-RBAC users (e.g. admin accounts on a separate model) fall through to standard authorization.
 - **Empty permissions table**: the cache resolves to an empty array; every check falls through to policies.
-- **Race condition during permission creation**: if a new permission is created and a Gate check fires before the cache invalidator runs, the check falls through to policies. The next request picks up the fresh cache. This window is microseconds in normal apps; if it matters for your use case, call `Cache::tags('rbac')->flush()` manually after the create.
+- **Race condition during permission creation**: if a new permission is created and a Gate check fires before the cache invalidator runs, the check falls through to policies. The next request picks up the fresh cache. This window is microseconds in normal apps; if it matters for your use case, invalidate manually after the create — conditionally on the cache driver:
+
+  ```php
+  if ( Cache::getStore() instanceof Illuminate\Cache\TaggableStore ) {
+      Cache::tags( config( 'artisanpack.rbac.cache.tag' ) )->flush();
+  } else {
+      Cache::forget( 'rbac_permission_names' );
+  }
+  ```

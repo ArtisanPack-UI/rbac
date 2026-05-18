@@ -62,7 +62,7 @@ Or sync to set the exact list:
 $permission->roles()->sync($roleIds);
 ```
 
-Both go through standard Eloquent. The permission's update event fires once, triggering cache invalidation for the user-permissions cache.
+Both go through standard Eloquent's `BelongsToMany`. Pivot `attach()` / `detach()` / `sync()` operations do **not** fire model events on the `Permission` or `Role`, so the permission-names cache and user-permissions cache are not invalidated automatically. If you mutate role-permission relationships directly via the pivot, call `$user->flushPermissionCache()` for each affected user (or rely on the per-request cache miss to pick up the new state).
 
 ## Where do the `rbac.*` events come from?
 

@@ -39,8 +39,10 @@ Route::middleware('permission:posts.publish');
 // Blade
 @role('editor') ... @endrole
 @permission('posts.publish') ... @endpermission
+```
 
-// Artisan
+```bash
+# Artisan
 php artisan role:create editor
 php artisan user:assign-role user@example.com editor
 ```

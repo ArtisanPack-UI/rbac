@@ -69,9 +69,20 @@ The defaults work well for most apps. Tune up or down based on your traffic and 
 When you bypass Eloquent, call invalidation yourself:
 
 ```php
-Cache::tags(config('artisanpack.rbac.cache.tag'))->flush();
+use Illuminate\Cache\TaggableStore;
+use Illuminate\Support\Facades\Cache;
+
+if ( Cache::getStore() instanceof TaggableStore ) {
+    Cache::tags( config( 'artisanpack.rbac.cache.tag' ) )->flush();
+} else {
+    // Non-taggable store (file, database, array) — flush the known key directly.
+    Cache::forget( 'rbac_permission_names' );
+}
+
 $user->flushPermissionCache();
 ```
+
+`Cache::tags(...)->flush()` throws `BadMethodCallException` on non-taggable drivers (`file`, `database`, `array`). The capability check above lets the same code path work everywhere.
 
 ## Disabling the cache
 
