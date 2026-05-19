@@ -3,16 +3,17 @@
 /**
  * Rbac helper functions.
  *
- * This file contains global helper functions for the Rbac package.
- * Add custom helper functions below.
+ * @package    ArtisanPack_UI
+ * @subpackage Rbac
  *
+ * @author     Jacob Martella <support@artisanpackui.dev>
  *
  * @since      1.0.0
  */
 
 use ArtisanPackUI\Rbac\Rbac;
 
-if (! function_exists('rbac')) {
+if ( ! function_exists( 'rbac' ) ) {
     /**
      * Get the Rbac instance.
      *
@@ -20,7 +21,7 @@ if (! function_exists('rbac')) {
      */
     function rbac(): Rbac
     {
-        return app('rbac');
+        return app( 'rbac' );
     }
 }
 

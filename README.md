@@ -279,6 +279,18 @@ composer test
 
 Tests run against an in-memory SQLite database via Orchestra Testbench. The package's own test suite covers role / permission models, traits, middleware, Artisan commands, Blade directives, Gate integration, observers, and the configurable model-binding pattern.
 
+## Sibling packages
+
+| Package | Scope |
+|---|---|
+| [`artisanpack-ui/security-full`](https://github.com/ArtisanPack-UI/security-full) | Meta-package — pulls in the full security suite (all six packages below) in a single require |
+| [`artisanpack-ui/security`](https://github.com/ArtisanPack-UI/security) | Core: input sanitization, output escaping, KSES, CSP, security headers |
+| [`artisanpack-ui/security-auth`](https://github.com/ArtisanPack-UI/security-auth) | 2FA, password complexity, account lockout, sessions |
+| [`artisanpack-ui/security-advanced-auth`](https://github.com/ArtisanPack-UI/security-advanced-auth) | WebAuthn, SSO, social login, biometric, device fingerprinting |
+| [`artisanpack-ui/secure-uploads`](https://github.com/ArtisanPack-UI/secure-uploads) | File validation, malware scanning, signed-URL serving |
+| [`artisanpack-ui/security-analytics`](https://github.com/ArtisanPack-UI/security-analytics) | Event logging, anomaly detection, SIEM, dashboards |
+| [`artisanpack-ui/compliance`](https://github.com/ArtisanPack-UI/compliance) | GDPR / CCPA / LGPD consent, data subject rights, DPIA, retention, monitoring |
+
 ## Contributing
 
 As an open source project, this package is open to contributions from anyone. Please [read through the contributing guidelines](CONTRIBUTING.md) to learn more about how you can contribute.

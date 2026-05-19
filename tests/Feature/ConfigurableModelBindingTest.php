@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare( strict_types=1 );
 
 use ArtisanPackUI\Rbac\Models\Permission;
 use ArtisanPackUI\Rbac\Models\Role;
@@ -9,47 +9,47 @@ use Tests\Models\CustomPermission;
 use Tests\Models\CustomRole;
 use Tests\Models\TestUser;
 
-it('role:create command honors a configured custom role model', function (): void {
-    Config::set('artisanpack.rbac.models.role', CustomRole::class);
+it( 'role:create command honors a configured custom role model', function (): void {
+    Config::set( 'artisanpack.rbac.models.role', CustomRole::class );
 
-    $this->artisan('role:create', ['name' => 'admin'])->assertSuccessful();
+    $this->artisan( 'role:create', ['name' => 'admin'] )->assertSuccessful();
 
-    $role = CustomRole::where('name', 'admin')->first();
-    expect($role)->toBeInstanceOf(CustomRole::class);
-    expect($role->customLabel())->toBe('custom:admin');
-});
+    $role = CustomRole::where( 'name', 'admin' )->first();
+    expect( $role )->toBeInstanceOf( CustomRole::class );
+    expect( $role->customLabel() )->toBe( 'custom:admin' );
+} );
 
-it('permission:create command honors a configured custom permission model', function (): void {
-    Config::set('artisanpack.rbac.models.permission', CustomPermission::class);
+it( 'permission:create command honors a configured custom permission model', function (): void {
+    Config::set( 'artisanpack.rbac.models.permission', CustomPermission::class );
 
-    $this->artisan('permission:create', ['name' => 'edit-articles'])->assertSuccessful();
+    $this->artisan( 'permission:create', ['name' => 'edit-articles'] )->assertSuccessful();
 
-    $permission = CustomPermission::where('name', 'edit-articles')->first();
-    expect($permission)->toBeInstanceOf(CustomPermission::class);
-});
+    $permission = CustomPermission::where( 'name', 'edit-articles' )->first();
+    expect( $permission )->toBeInstanceOf( CustomPermission::class );
+} );
 
-it('HasRoles trait resolves role lookups against the configured model', function (): void {
-    Config::set('artisanpack.rbac.models.role', CustomRole::class);
+it( 'HasRoles trait resolves role lookups against the configured model', function (): void {
+    Config::set( 'artisanpack.rbac.models.role', CustomRole::class );
 
-    $user = TestUser::create(['name' => 'Test', 'email' => 'test@example.com']);
-    CustomRole::create(['name' => 'admin']);
+    $user = TestUser::create( ['name' => 'Test', 'email' => 'test@example.com'] );
+    CustomRole::create( ['name' => 'admin'] );
 
-    $user->assignRole('admin');
+    $user->assignRole( 'admin' );
 
     $resolved = $user->fresh();
-    $resolved->load('roles');
+    $resolved->load( 'roles' );
 
-    expect($resolved->hasRole('admin'))->toBeTrue();
-    expect($resolved->roles->first())->toBeInstanceOf(CustomRole::class);
-});
+    expect( $resolved->hasRole( 'admin' ) )->toBeTrue();
+    expect( $resolved->roles->first() )->toBeInstanceOf( CustomRole::class );
+} );
 
-it('falls back to base models when no override is configured', function (): void {
-    expect(Config::get('artisanpack.rbac.models.role'))->toBe(Role::class);
-    expect(Config::get('artisanpack.rbac.models.permission'))->toBe(Permission::class);
+it( 'falls back to base models when no override is configured', function (): void {
+    expect( Config::get( 'artisanpack.rbac.models.role' ) )->toBe( Role::class );
+    expect( Config::get( 'artisanpack.rbac.models.permission' ) )->toBe( Permission::class );
 
-    $role = Role::create(['name' => 'admin']);
-    $permission = Permission::create(['name' => 'edit-articles']);
+    $role       = Role::create( ['name' => 'admin'] );
+    $permission = Permission::create( ['name' => 'edit-articles'] );
 
-    expect($role)->toBeInstanceOf(Role::class);
-    expect($permission)->toBeInstanceOf(Permission::class);
-});
+    expect( $role )->toBeInstanceOf( Role::class );
+    expect( $permission )->toBeInstanceOf( Permission::class );
+} );

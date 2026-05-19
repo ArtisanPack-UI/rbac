@@ -1,6 +1,17 @@
 <?php
 
-declare(strict_types=1);
+/**
+ * Role Eloquent observer.
+ *
+ * @package    ArtisanPack_UI
+ * @subpackage Rbac
+ *
+ * @author     Jacob Martella <support@artisanpackui.dev>
+ *
+ * @since      1.0.0
+ */
+
+declare( strict_types=1 );
 
 namespace ArtisanPackUI\Rbac\Observers;
 
@@ -18,18 +29,18 @@ use Illuminate\Support\Facades\Event;
  */
 class RoleObserver
 {
-    public function created(Role $role): void
+    public function created( Role $role ): void
     {
-        Event::dispatch('rbac.role.created', [$role]);
+        Event::dispatch( 'rbac.role.created', [$role] );
     }
 
-    public function updated(Role $role): void
+    public function updated( Role $role ): void
     {
-        Event::dispatch('rbac.role.updated', [$role, $role->getChanges(), $role->getOriginal()]);
+        Event::dispatch( 'rbac.role.updated', [$role, $role->getChanges(), $role->getOriginal()] );
     }
 
-    public function deleted(Role $role): void
+    public function deleted( Role $role ): void
     {
-        Event::dispatch('rbac.role.deleted', [$role]);
+        Event::dispatch( 'rbac.role.deleted', [$role] );
     }
 }

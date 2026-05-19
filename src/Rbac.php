@@ -1,16 +1,22 @@
 <?php
 
 /**
- * Main Rbac class.
+ * Main Rbac class — public entry point reserved for future API surface.
  *
- * This is the main class for the package, accessed via the 'rbac' helper
- * function or the Rbac facade.
+ * Accessed via the `rbac()` helper or the `Rbac` Facade. The class itself
+ * is intentionally empty today; the package's behaviour lives in models,
+ * traits, middleware, and the service provider. Add public API methods
+ * here as cross-cutting role / permission lookups emerge.
  *
+ * @package    ArtisanPack_UI
+ * @subpackage Rbac
+ *
+ * @author     Jacob Martella <support@artisanpackui.dev>
  *
  * @since      1.0.0
  */
 
-declare(strict_types=1);
+declare( strict_types=1 );
 
 namespace ArtisanPackUI\Rbac;
 

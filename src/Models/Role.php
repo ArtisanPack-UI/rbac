@@ -1,6 +1,17 @@
 <?php
 
-declare(strict_types=1);
+/**
+ * Role Eloquent model.
+ *
+ * @package    ArtisanPack_UI
+ * @subpackage Rbac
+ *
+ * @author     Jacob Martella <support@artisanpackui.dev>
+ *
+ * @since      1.0.0
+ */
+
+declare( strict_types=1 );
 
 namespace ArtisanPackUI\Rbac\Models;
 
@@ -10,6 +21,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
+use RuntimeException;
 
 /**
  * Role model — represents a named bundle of permissions optionally arranged
@@ -27,53 +39,53 @@ class Role extends Model
         'parent_id',
     ];
 
-    public function scopeWhereSlug(Builder $query, string $slug): Builder
+    public function scopeWhereSlug( Builder $query, string $slug ): Builder
     {
-        return $query->where('slug', $slug);
+        return $query->where( 'slug', $slug );
     }
 
-    public static function findBySlug(string $slug): ?static
+    public static function findBySlug( string $slug ): ?static
     {
-        return static::query()->where('slug', $slug)->first();
+        return static::query()->where( 'slug', $slug )->first();
     }
 
     public function permissions(): BelongsToMany
     {
         return $this->belongsToMany(
-            config('artisanpack.rbac.models.permission', Permission::class),
-            config('artisanpack.rbac.tables.permission_role', 'permission_role'),
+            config( 'artisanpack.rbac.models.permission', Permission::class ),
+            config( 'artisanpack.rbac.tables.permission_role', 'permission_role' ),
         );
     }
 
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(
-            config('auth.providers.users.model'),
-            config('artisanpack.rbac.tables.role_user', 'role_user'),
+            config( 'auth.providers.users.model' ),
+            config( 'artisanpack.rbac.tables.role_user', 'role_user' ),
             'role_id',
-            config('artisanpack.rbac.foreign_keys.user', 'user_id'),
+            config( 'artisanpack.rbac.foreign_keys.user', 'user_id' ),
         );
     }
 
     public function parent(): BelongsTo
     {
-        return $this->belongsTo(static::class, 'parent_id');
+        return $this->belongsTo( static::class, 'parent_id' );
     }
 
     public function children(): HasMany
     {
-        return $this->hasMany(static::class, 'parent_id');
+        return $this->hasMany( static::class, 'parent_id' );
     }
 
-    public function save(array $options = []): bool
+    public function save( array $options = [] ): bool
     {
-        if (empty($this->slug) && ! empty($this->name)) {
-            $this->slug = Str::slug($this->name);
+        if ( empty( $this->slug ) && ! empty( $this->name ) ) {
+            $this->slug = Str::slug( $this->name );
         }
 
         $this->guardAgainstNameSlugCollision();
 
-        return parent::save($options);
+        return parent::save( $options );
     }
 
     /**
@@ -84,32 +96,32 @@ class Role extends Model
      */
     protected function guardAgainstNameSlugCollision(): void
     {
-        if (empty($this->name) || empty($this->slug)) {
+        if ( empty( $this->name ) || empty( $this->slug ) ) {
             return;
         }
 
         $key = $this->getKey();
 
         $collision = static::query()
-            ->where(function ($query): void {
-                $query->where('name', $this->slug)
-                    ->orWhere('slug', $this->name);
-            })
-            ->when($key !== null, fn ($query) => $query->where($this->getKeyName(), '!=', $key))
-            ->where(function ($query): void {
+            ->where( function ( $query ): void {
+                $query->where( 'name', $this->slug )
+                    ->orWhere( 'slug', $this->name );
+            } )
+            ->when( null !== $key, fn ( $query ) => $query->where( $this->getKeyName(), '!=', $key ) )
+            ->where( function ( $query ): void {
                 // Self-overlap (name === slug on this same row) is fine —
                 // it's the most common case post auto-derivation.
-                $query->where('name', '!=', $this->name)
-                    ->orWhere('slug', '!=', $this->slug);
-            })
+                $query->where( 'name', '!=', $this->name )
+                    ->orWhere( 'slug', '!=', $this->slug );
+            } )
             ->exists();
 
-        if ($collision) {
-            throw new \RuntimeException(sprintf(
+        if ( $collision ) {
+            throw new RuntimeException( sprintf(
                 'Role name/slug collision: another row already uses "%s" or "%s" in the opposite column.',
                 $this->name,
                 $this->slug,
-            ));
+            ) );
         }
     }
 
@@ -117,7 +129,7 @@ class Role extends Model
     {
         parent::boot();
 
-        static::deleting(function ($role): void {
+        static::deleting( function ( $role ): void {
             $role->permissions()->detach();
             $role->users()->detach();
         });
