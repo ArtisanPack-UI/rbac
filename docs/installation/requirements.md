@@ -10,9 +10,9 @@ title: Requirements
 
 ## Laravel
 
-- Laravel 10 / 11 / 12
+- Laravel 10 / 11 / 12 / 13
 
-The package targets `illuminate/support: ^10.0|^11.0|^12.0`. No compatibility shims — if you're on Laravel 9 or below, stay on `artisanpack-ui/security` 1.x.
+The package targets `illuminate/support: ^10.0|^11.0|^12.0|^13.0`. No compatibility shims — if you're on Laravel 9 or below, stay on `artisanpack-ui/security` 1.x. Note that Laravel 13 itself requires PHP 8.3+, so the Laravel 13 leg only resolves on that PHP floor; Laravel 10-12 continue to work on PHP 8.2+.
 
 ## Dependencies
 
