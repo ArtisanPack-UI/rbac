@@ -31,15 +31,32 @@ trait HasPermissions
 {
     public function hasPermissionTo( string $permission ): bool
     {
+        return in_array( $permission, $this->getAbilities(), true );
+    }
+
+    /**
+     * Return the flat list of ability strings this user can perform.
+     *
+     * Collects the `name` and `slug` of every permission reachable through
+     * the user's roles (walking the parent hierarchy), then passes the list
+     * through the `ap.rbac.abilitiesForUser` filter so external sources
+     * (LDAP groups, feature flags, tenant policies) can extend or override
+     * it.
+     *
+     * @since 1.1.0
+     *
+     * @return array<int, string>
+     */
+    public function getAbilities(): array
+    {
         $permissions = $this->resolvePermissions();
 
-        // Prefer name match; fall back to slug. This avoids ambiguity
-        // when one row's name happens to equal another row's slug.
-        if ( $permissions->contains( 'name', $permission ) ) {
-            return true;
-        }
+        $abilities = array_values( array_unique( array_merge(
+            $permissions->pluck( 'name' )->all(),
+            $permissions->pluck( 'slug' )->all(),
+        ) ) );
 
-        return $permissions->contains( 'slug', $permission );
+        return applyFilters( 'ap.rbac.abilitiesForUser', $abilities, $this );
     }
 
     /**

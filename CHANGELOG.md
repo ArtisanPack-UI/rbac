@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-07-21
+
+### Added
+
+- Lifecycle hooks powered by `artisanpack-ui/hooks`:
+  - `ap.rbac.abilitiesForUser` filter — passes the resolved ability list through user-space filters, letting external packages graft permissions from LDAP, feature flags, or tenant policies onto a user without subclassing.
+  - `ap.rbac.role.assigned` action — fired from `HasRoles::assignRole()` after a role is attached, with `(User $user, Role $role)`.
+  - `ap.rbac.role.revoked` action — fired from `HasRoles::removeRole()` after a role is detached, with `(User $user, Role $role)`.
+  - `ap.rbac.checkingAbility` action — fired from the RBAC `Gate::before` shim before ability resolution, with `(User $user, string $ability, mixed $arguments)`, giving compliance-heavy apps a low-friction audit seam.
+- `HasPermissions::getAbilities()` — returns the flat list of ability strings (names + slugs) the user can perform, after the `ap.rbac.abilitiesForUser` filter has run. `hasPermissionTo()` now resolves through this method, so grafted abilities are honored by `$user->can()`, `Gate::allows()`, and `@can`.
+
+### Changed
+
+- `artisanpack-ui/hooks: ^1.3` is now a hard dependency. The rbac package no longer works without it — hook fire sites are called unconditionally.
+
 ## [1.0.1] - 2026-06-14
 
 ### Added

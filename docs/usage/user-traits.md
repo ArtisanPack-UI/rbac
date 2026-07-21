@@ -55,6 +55,7 @@ Resolves the user's effective permission set by walking the role hierarchy. Requ
 ```php
 $user->hasPermissionTo('posts.publish');   // bool
 $user->hasPermission('posts.publish');     // alias of hasPermissionTo
+$user->getAbilities();                     // array<int, string> — flat ability list
 $user->flushPermissionCache();             // call after manual pivot mutations
 ```
 
@@ -63,7 +64,10 @@ $user->flushPermissionCache();             // call after manual pivot mutations
 1. Load the user's direct roles via `HasRoles::roles()`.
 2. For each role, walk up the `parent` chain collecting permissions at each level.
 3. Union the resulting permission collection and cache it under a per-user cache key for `artisanpack.rbac.cache.user_permissions_ttl` seconds (default 60).
-4. Return `true` if either the permission's `name` or `slug` matches the supplied string.
+4. `getAbilities()` flattens the collection into a de-duplicated array of ability strings (each permission contributes both its `name` and its `slug`) and runs it through the `ap.rbac.abilitiesForUser` filter so external sources can graft additional abilities onto the user.
+5. `hasPermissionTo()` returns `true` if the supplied string appears anywhere in `getAbilities()`.
+
+See [Hooks](../advanced/hooks.md) for the filter contract and grafting patterns.
 
 ### Manual cache invalidation
 

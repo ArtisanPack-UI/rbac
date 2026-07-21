@@ -151,10 +151,12 @@ class RbacServiceProvider extends ServiceProvider
      */
     protected function registerGate(): void
     {
-        Gate::before( function ( $user, $ability ) {
+        Gate::before( function ( $user, $ability, $arguments = [] ) {
             if ( ! method_exists( $user, 'hasPermissionTo' ) ) {
                 return null;
             }
+
+            doAction( 'ap.rbac.checkingAbility', $user, $ability, $arguments );
 
             $permissionNames = $this->getCachedPermissionNames();
 
