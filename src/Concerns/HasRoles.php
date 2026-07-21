@@ -69,6 +69,7 @@ trait HasRoles
         if ( null !== $resolved ) {
             $this->roles()->syncWithoutDetaching( [$resolved->getKey()] );
             Event::dispatch( 'rbac.user.role_assigned', [$this, $resolved] );
+            doAction( 'ap.rbac.role.assigned', $this, $resolved );
 
             if ( method_exists( $this, 'flushPermissionCache' ) ) {
                 $this->flushPermissionCache();
@@ -85,6 +86,7 @@ trait HasRoles
         if ( null !== $resolved ) {
             $this->roles()->detach( $resolved->getKey() );
             Event::dispatch( 'rbac.user.role_removed', [$this, $resolved] );
+            doAction( 'ap.rbac.role.revoked', $this, $resolved );
 
             if ( method_exists( $this, 'flushPermissionCache' ) ) {
                 $this->flushPermissionCache();
