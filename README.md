@@ -271,6 +271,38 @@ Pivot mutations are dispatched directly from the trait helpers since Laravel doe
 
 Listen for these in any application or sibling package — `security-analytics` uses them for audit logging.
 
+## Hooks
+
+The package integrates with [`artisanpack-ui/hooks`](https://github.com/ArtisanPack-UI/hooks) to expose lifecycle seams that let external packages graft onto the role / permission flow without subclassing or event-listener boilerplate.
+
+| Hook | Type | Fired from | Payload |
+|---|---|---|---|
+| `ap.rbac.abilitiesForUser` | filter | `HasPermissions::getAbilities()` | `(array $abilities, User $user)` |
+| `ap.rbac.role.assigned` | action | `HasRoles::assignRole()` | `(User $user, Role $role)` |
+| `ap.rbac.role.revoked` | action | `HasRoles::removeRole()` | `(User $user, Role $role)` |
+| `ap.rbac.checkingAbility` | action | `Gate::before` (in the RBAC service provider) | `(User $user, string $ability, mixed $arguments)` |
+
+`ap.rbac.abilitiesForUser` is the canonical extension seam for grafting external permission sources (LDAP groups, feature flags, tenant policies) onto a user's ability set. `hasPermissionTo()` and Laravel's Gate resolve through this list, so grafted abilities are honored everywhere.
+
+`ap.rbac.checkingAbility` is an audit seam — every Gate check on a user carrying the `HasPermissions` trait fires it before RBAC resolution, whether or not the ability ends up matching an RBAC permission.
+
+```php
+use function addFilter;
+use function addAction;
+
+// Graft ability strings from an external source.
+addFilter( 'ap.rbac.abilitiesForUser', function ( array $abilities, $user ): array {
+    return array_merge( $abilities, resolveLdapGroups( $user ) );
+} );
+
+// Audit every ability check.
+addAction( 'ap.rbac.checkingAbility', function ( $user, string $ability, $arguments ): void {
+    Log::channel( 'audit' )->info( 'rbac.check', compact( 'user', 'ability', 'arguments' ) );
+} );
+```
+
+The sibling `ap.rbac.roleRegistered` and `ap.rbac.permissionRegistered` hooks are documented in and fired from `artisanpack-ui/cms-framework` — this package does not re-fire them.
+
 ## Testing
 
 ```bash
