@@ -19,6 +19,7 @@ This package is **standalone** — it does not depend on `artisanpack-ui/securit
 - Artisan commands for CRUD over roles and role assignments
 - Configurable model bindings so consumers can extend `Role` / `Permission` with their own subclasses
 - Eloquent observer events on the `rbac.*` channel for downstream auditing
+- `artisanpack-ui/hooks` lifecycle seams (`ap.rbac.*`) for grafting abilities from external sources and auditing Gate checks
 
 ## Documentation map
 

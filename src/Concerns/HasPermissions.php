@@ -43,6 +43,8 @@ trait HasPermissions
      * (LDAP groups, feature flags, tenant policies) can extend or override
      * it.
      *
+     * @since 1.1.0
+     *
      * @return array<int, string>
      */
     public function getAbilities(): array
